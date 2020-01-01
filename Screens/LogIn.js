@@ -59,7 +59,7 @@ export class LogIn extends Component {
                     zIndex: 2,
                     position: "absolute",
                     left: 360,
-                    top: 18,
+                    top: 15,
                     height: 40,
                     width: 40,
                     alignItems: "center",
@@ -95,7 +95,20 @@ export class LogIn extends Component {
               </View>
             </View>
           </View>
-          <View style={styles.Buttons}></View>
+          <View style={styles.ButtonBox}>
+            <TouchableOpacity>
+              <Text style={{...styles.TextStylings, fontSize: 15, margin: 5,color: '#12b0b5'}}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple()} >
+                  <View style={styles.Buttons}>
+                    <Text style={{...styles.TextStylings, fontSize: 15, color: 'white'}}>Log In</Text>
+                  </View>
+            </TouchableNativeFeedback>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('SignUpScreen')}>
+              <Text style={{...styles.TextStylings, fontSize: 15, marginTop: 25,color: '#12b0b5', alignSelf: 'center'}}>New Here? Register Here!</Text>
+            </TouchableOpacity>
+                  
+          </View>
         </View>
       </View>
     );
@@ -108,7 +121,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "stretch"
+    alignItems: "stretch",
   },
   Heading: {
     alignItems: "center"
@@ -118,7 +131,14 @@ const styles = {
     alignItems: "stretch",
     justifyContent: "space-between"
   },
-  Buttons: {},
+  Buttons: {
+    height: 30,
+    backgroundColor: '#16dae0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    margin: 5
+  },
   ParentBox: {
     top: 50,
     height: 300,
@@ -132,11 +152,18 @@ const styles = {
   },
   Inputs: {
     top: 10,
-    height: 55,
+    height: 50,
     borderColor: "#72e8ed",
     marginRight: 20,
     borderRadius: 10,
-    padding: 20,
+    paddingLeft: 20,
     fontFamily: "KulimPark"
+  },
+  ButtonBox: {
+    top: 100,
+    backgroundColor: '',
+    height: 150,
+    marginRight: 20,
+    alignItems: 'stretch'
   }
 };

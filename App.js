@@ -20,7 +20,7 @@ const AppContainer = createStackNavigator(
     SignUpScreen: SignUp
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'MainScreen',
   }
 );
 export default createAppContainer(AppContainer);
