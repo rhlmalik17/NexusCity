@@ -13,6 +13,10 @@ LogIn.navigationOptions={
   header: null
 }
 
+SignUp.navigationOptions={
+  header: null
+}
+
 const AppContainer = createStackNavigator(
   {
     MainScreen: MainScreen,

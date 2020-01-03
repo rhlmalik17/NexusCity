@@ -42,7 +42,7 @@ export default class MainScreen extends React.Component {
             {/* BUTTONS */}
             {/* LOGIN */}
 
-            <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('LoginScreen')} >
+            <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('LoginScreen')} background={TouchableNativeFeedback.Ripple('',false)} >
               <View style={styles.LoginButton}>
                 <Text style={{ fontSize: 25, color: "#FFF" , fontFamily: 'Open-Sans' }}>LOGIN</Text>
               </View>
@@ -55,7 +55,7 @@ export default class MainScreen extends React.Component {
                 backgroundColor: "rgba(255,255,255,0.8)"
               }}
             ></View>
-           <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('SignUpScreen')}>
+           <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('SignUpScreen')} background={TouchableNativeFeedback.Ripple('',false)}>
             <View style={{...styles.LoginButton, backgroundColor:'rgba(219, 219, 219, 0.5)'}}>
               <Text style={{ fontSize: 25, color: "#FFF" , fontFamily: 'Open-Sans'}}>SIGN UP</Text>
               </View>
