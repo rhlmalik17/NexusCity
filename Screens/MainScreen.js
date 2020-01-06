@@ -1,89 +1,171 @@
 import React from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    ImageBackground,
-    TouchableNativeFeedback,
-  } from "react-native";
-  import * as Font from "expo-font";
-  import Icon from 'react-native-vector-icons/FontAwesome';
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-export default class MainScreen extends React.Component {
-
-  async componentDidMount() {
-    await Font.loadAsync({
-      'NicotineRegular' : require("../Fonts/Nicotine-Regular.ttf"),
-      'Open-Sans' : require("../Fonts/OpenSans-Regular.ttf")
-    });
-  }
-
-  render() {
-    return (
-      <ImageBackground
-        source={require("../assets/Background.png")}
-        style={styles.container}
-      >
-        <View nativeID="FlexBOX" style={styles.ParentBox}>
-        <Image source={require('../assets/Logo.png')} style={styles.Logo}/>
-          <View style={styles.logoBox}>
-            {/* LOGO */}
-            <View style={styles.Icons}>
-            <Icon name="building" color="#FFF" size={50} style={{top: 10}}/>
-            <Icon name="building" color="#FFF" size={60} />
-            <Icon name="building" color="#FFF" size={40} style={{top: 20}} />
-            </View>
-            <Text style={styles.TextStylings}>NexusCity</Text>
-          </View>
-          <View style={styles.buttonBox}>
-            {/* BUTTONS */}
-            {/* LOGIN */}
-
-            <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('LoginScreen')} background={TouchableNativeFeedback.Ripple('',false)} >
-              <View style={styles.LoginButton}>
-                <Text style={{ fontSize: 25, color: "#FFF" , fontFamily: 'Open-Sans' }}>LOGIN</Text>
-              </View>
-            </TouchableNativeFeedback>
-            <View
-              style={{
-                borderRadius: 20,
-                height: 10,
-                width: 200,
-                backgroundColor: "rgba(255,255,255,0.8)"
-              }}
-            ></View>
-           <TouchableNativeFeedback onPress={()=>this.props.navigation.navigate('SignUpScreen')} background={TouchableNativeFeedback.Ripple('',false)}>
-            <View style={{...styles.LoginButton, backgroundColor:'rgba(219, 219, 219, 0.5)'}}>
-              <Text style={{ fontSize: 25, color: "#FFF" , fontFamily: 'Open-Sans'}}>SIGN UP</Text>
-              </View>
-              </TouchableNativeFeedback>
-          </View>
-          <View style={styles.apiBox}>{/* API BUTTONS */}
-            <Icon 
-                name="facebook"
-                color="#FFF"
-                size={50}
-               />
-               <Icon 
-                name="twitter"
-                color="#FFF"
-                size={50}
-               />
-              <Icon 
-                name="google"
-                color="#FFF"
-                size={50}
-               />
-          </View>
-        </View>
-      </ImageBackground>
-    );
-  }
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ImageBackground,
+  TouchableNativeFeedback,
+  ActivityIndicator,
+  StatusBar,
+} from "react-native";
+import * as Font from "expo-font";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { TouchableOpacity, TouchableHighlight } from "react-native-gesture-handler";
+import * as firebase from 'firebase';
+import firebaseConfig from '../config';
+import { RFPercentage } from 'react-native-responsive-fontsize';
+import { StackActions, NavigationActions } from 'react-navigation';
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
 
+export default class MainScreen extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      fontsLoaded: false,
+      willLoad: false,
+    };
+    firebase.auth().onAuthStateChanged(function(user){
+      if(user)
+      {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'DashBoardScreen' })]
+        });
+        this.props.navigation.dispatch(resetAction);
+      }
+      else
+      {
+        this.setState({willLoad: true})
+      }
+    }.bind(this));
+   
+  }
+  async componentDidMount() {
+    await Font.loadAsync({
+      NicotineRegular: require("../Fonts/Nicotine-Regular.ttf"),
+      "Open-Sans": require("../Fonts/OpenSans-Regular.ttf")
+    });
+    await this.setState({ fontsLoaded: true });
+  }
+  
+  render() {
+    if(this.state.willLoad)
+    {
+      if (!this.state.fontsLoaded) {
+        return <ActivityIndicator size="large" />;
+      } else {
+        return (
+          <ImageBackground
+            source={require("../assets/Background.png")}
+            style={styles.container}
+          >
+          <StatusBar  
+     backgroundColor = "#b3e6ff"  
+     barStyle = "dark-content"   
+     hidden={true}
+   />  
+            <View nativeID="FlexBOX" style={styles.ParentBox}>
+            <View style={styles.logoParent}>
+            <Image source={require("../assets/Logo.png")} style={styles.Logo} />
+              <View style={styles.logoBox}>
+                {/* LOGO */}
+                <View style={styles.Icons}>
+                  <Icon
+                    name="location-arrow"
+                    color="#FFF"
+                    size={RFPercentage(8)}
+                  />
+                </View>
+                <Text style={styles.TextStylings}>NexusCity</Text>
+              </View>
+            </View>
+              
+              <View style={styles.buttonBox}>
+                {/* BUTTONS */}
+                {/* LOGIN */}
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("LoginScreen")}
+                  background={TouchableNativeFeedback.Ripple("", false)}
+                >
+                  <View style={styles.LoginButton}>
+                    <Text
+                      style={{
+                        fontSize: RFPercentage(3),
+                        color: "#FFF",
+                        fontFamily: "Open-Sans"
+                      }}
+                    >
+                      LOGIN
+                    </Text>
+                  </View>
+                  </TouchableNativeFeedback>
+                 
+                
+
+                <View
+                  style={{
+                    borderRadius: 20,
+                    height: '5%',
+                    width: '45%',
+                    backgroundColor: "rgba(255,255,255,0.8)"
+                  }}
+                ></View>
+                
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("SignUpScreen")}
+                  background={TouchableNativeFeedback.Ripple("", false)}
+                >
+                  <View
+                    style={{
+                      ...styles.LoginButton,
+                      backgroundColor: "rgba(219, 219, 219, 0.5)"
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: RFPercentage(3),
+                        color: "#FFF",
+                        fontFamily: "Open-Sans"
+                      }}
+                    >
+                      SIGN UP
+                    </Text>
+                  </View>
+                </TouchableNativeFeedback>
+              </View>
+              <View style={styles.apiBox}>
+                {/* API BUTTONS */}
+                <TouchableOpacity>
+                  <Icon name="facebook" color="#FFF" size={RFPercentage(5)} />
+                </TouchableOpacity>
+  
+                <TouchableOpacity>
+                  <Icon
+                    name="google"
+                    color="#FFF"
+                    size={RFPercentage(5)}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ImageBackground>
+        );
+    }
+    
+    }
+    else
+    {
+      return (
+        <View style={{ flex:1,alignItems: 'center', justifyContent: 'center' }}>
+          <Text>Hello</Text>
+        </View>
+      );
+    }
+  }
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -92,59 +174,65 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#00FFFF"
   },
-  ParentBox: {
-    flex: 0.9,
+  ParentBox:{
+    height: '100%',
     justifyContent: "space-around",
-    alignItems: "center"
+    alignItems: "center",
+
   },
   logoBox: {
-    top: 20,
-    width: 280,
-    height: 280,
+    width: RFPercentage(35),
+    height: RFPercentage(35),
     backgroundColor: "rgba(0, 175, 181, 0.5)",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 150,
+    borderRadius: RFPercentage(50),
+    
+  },
+  logoParent:{
+    width: RFPercentage(35),
+    height: RFPercentage(35),
+    alignItems: 'center',
+    justifyContent: 'center',
+
   },
   buttonBox: {
-    width: 400,
-    height: 180,
+    height: '20%',
+    width: '100%',
     alignItems: "center",
     justifyContent: "space-between",
-    top: 40
   },
   apiBox: {
-    width: 350,
-    height: 100,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    width: '65%',
+    height: '10%',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
     top: 20
   },
   TextStylings: {
     color: "#FFF",
-    fontSize: 50,
+    fontSize: RFPercentage(6),
     fontFamily: "NicotineRegular",
-    rotation: -8
+    transform: [{ rotate: "-8deg" }]
   },
   LoginButton: {
     backgroundColor: "rgba(0, 175, 181, 1)",
-    height: 60,
-    width: 400,
+    height: '35%',
+    width: '86%',
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 30
+    borderRadius: 30,
   },
-  Logo:{
-    height: 500,
-    width: 500,
-    position: 'absolute',
-    top: -45,
-    left: -20,
-    zIndex: 1
+  Logo: {
+    height: RFPercentage(60),
+    width: RFPercentage(60),
+    position: "absolute",
+    zIndex: 1,
+    top: RFPercentage(-12)
   },
   Icons: {
     marginBottom: 25,
-    flexDirection: 'row',
+    flexDirection: "row"
   }
 });

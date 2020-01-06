@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { Text, View, TouchableNativeFeedback } from "react-native";
+import { Text, View, TouchableNativeFeedback, ActivityIndicator } from "react-native";
 import * as Font from "expo-font";
 import {
   TextInput,
   TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { signUpAndCreateUser } from '../Credentials/ManageUsers';
+
 
 export class SignUp extends Component {
   constructor() {
@@ -17,16 +19,35 @@ export class SignUp extends Component {
       focus2: false,
       focus3: false,
       focus4: false,
-      isHidden: true
+      isHidden: true,
+      fontsLoaded: false,
+      Full_Name: '',
+      email: '',
+      username: '',
+      password: '',
     };
   }
-
+  bundleDataAndSend(){
+    if((this.state.Full_Name) && 
+    (this.state.email) && 
+    (this.state.username) && 
+    (this.state.password))
+    {
+      signUpAndCreateUser(this.state.Full_Name,this.state.email,this.state.username,this.state.password,this);
+    }
+  }
   async componentDidMount() {
     await Font.loadAsync({
       KulimPark: require("../Fonts/KulimPark-Regular.ttf")
     });
+    await this.setState({ fontsLoaded: true });
   }
   render() {
+    if(!this.state.fontsLoaded)
+    {
+      return <ActivityIndicator size="large"/>
+    }
+    else {
     return (
       <View style={styles.container}>
         <View style={styles.ParentBox}>
@@ -49,6 +70,8 @@ export class SignUp extends Component {
                     ? "#FFF"
                     : "rgba(211, 219, 219,0.5)"
                 }}
+                value={this.state.Full_Name}
+                onChangeText={(text)=> this.setState({ Full_Name: text })}
               />
               
             </View>
@@ -67,6 +90,9 @@ export class SignUp extends Component {
                     ? "#FFF"
                     : "rgba(211, 219, 219,0.5)"
                 }}
+                value={this.state.email}
+                onChangeText={(text)=> this.setState({ email: text })}
+                autoCapitalize = 'none'
               />
             </View>
             <View>
@@ -84,6 +110,9 @@ export class SignUp extends Component {
                     ? "#FFF"
                     : "rgba(211, 219, 219,0.5)"
                 }}
+                value={this.state.username}
+                onChangeText={(text)=> this.setState({ username: text })}
+                autoCapitalize = 'none'
               />
             </View>
             <View>
@@ -128,6 +157,9 @@ export class SignUp extends Component {
                       : "rgba(211, 219, 219,0.5)"
                   }}
                   secureTextEntry={this.state.isHidden ? true : false}
+                value={this.state.password}
+                onChangeText={(text)=> this.setState({ password: text })}
+                autoCapitalize = 'none'
                 />
               </View>
             </View>
@@ -154,8 +186,13 @@ export class SignUp extends Component {
             </View>
             <TouchableNativeFeedback
               background={TouchableNativeFeedback.Ripple()}
+              onPress={()=>this.bundleDataAndSend()}
             >
-              <View style={styles.Buttons}>
+              <View style={ ((this.state.Full_Name) && 
+                             (this.state.email) && 
+                             (this.state.username) && 
+                             (this.state.password)) ?  
+                             styles.Buttons : styles.DisableButton}>
                 <Text
                   style={{
                     ...styles.TextStylings,
@@ -186,6 +223,7 @@ export class SignUp extends Component {
         </View>
       </View>
     );
+              }
   }
 }
 
@@ -239,5 +277,14 @@ const styles = {
     marginRight: 20,
     alignItems: "stretch",
     top: 40
+  },
+  DisableButton: {
+    height: 30,
+    backgroundColor: "rgba(211, 219, 219,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+    margin: 5,
+    top: 10
   }
 };

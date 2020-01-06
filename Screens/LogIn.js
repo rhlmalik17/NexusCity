@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TouchableNativeFeedback } from "react-native";
+import { Text, View, TouchableNativeFeedback, ActivityIndicator } from "react-native";
 import * as Font from "expo-font";
 import {
   TextInput,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import { signInUser } from '../Credentials/ManageUsers';
 export class LogIn extends Component {
   constructor() {
     super();
@@ -15,16 +15,37 @@ export class LogIn extends Component {
       borderWidth: 2,
       focus: false,
       focus2: false,
-      isHidden: true
+      isHidden: true,
+      fontsLoaded: false,
+      username: '',
+      password: '',
     };
+    
   }
-
+  checkAndLogin()
+  {
+    if((this.state.username && this.state.password))
+    {
+    signInUser(this.state.username,this.state.password,this);
+     
+    }
+    else
+    {
+      alert('Enter all the fields');
+    }
+  }
   async componentDidMount() {
     await Font.loadAsync({
       KulimPark: require("../Fonts/KulimPark-Regular.ttf")
     });
+    await this.setState({ fontsLoaded: true });
   }
   render() {
+    if(!this.state.fontsLoaded)
+    {
+      return <ActivityIndicator size="large"/>
+    }
+    else {
     return (
       <View style={styles.container}>
         <View style={styles.ParentBox}>
@@ -47,6 +68,9 @@ export class LogIn extends Component {
                     ? "#FFF"
                     : "rgba(211, 219, 219,0.5)"
                 }}
+                value={this.state.username}
+                onChangeText={(text)=> this.setState({ username: text })}
+                autoCapitalize = 'none'
               />
             </View>
             <View style={{ top: 30 }}>
@@ -91,6 +115,9 @@ export class LogIn extends Component {
                       : "rgba(211, 219, 219,0.5)"
                   }}
                   secureTextEntry={this.state.isHidden ? true : false}
+                  value={this.state.password}
+                onChangeText={(text)=> this.setState({ password: text })}
+                autoCapitalize='none'
                 />
               </View>
             </View>
@@ -99,8 +126,8 @@ export class LogIn extends Component {
             <TouchableOpacity>
               <Text style={{...styles.TextStylings, fontSize: 15, margin: 5,color: '#12b0b5'}}>Forgot Password?</Text>
             </TouchableOpacity>
-            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple()} >
-                  <View style={styles.Buttons}>
+            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple()} onPress={()=> this.checkAndLogin()}>
+                  <View style={(this.state.username && this.state.password) ? styles.Buttons : styles.DisableButton}>
                     <Text style={{...styles.TextStylings, fontSize: 15, color: 'white'}}>Log In</Text>
                   </View>
             </TouchableNativeFeedback>
@@ -111,7 +138,7 @@ export class LogIn extends Component {
           </View>
         </View>
       </View>
-    );
+    );}
   }
 }
 
@@ -165,5 +192,13 @@ const styles = {
     height: 150,
     marginRight: 20,
     alignItems: 'stretch'
+  },
+  DisableButton: {
+    height: 30,
+    backgroundColor: 'rgba(211, 219, 219,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    margin: 5
   }
 };
