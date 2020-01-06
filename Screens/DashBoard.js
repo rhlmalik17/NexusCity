@@ -53,6 +53,7 @@ export default DashBoard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    /*Hello*/
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
