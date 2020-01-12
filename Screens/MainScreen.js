@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  StyleSheet,
   Text,
   View,
   Image,
@@ -10,12 +9,12 @@ import {
   StatusBar,
 } from "react-native";
 import * as Font from "expo-font";
+import styles from '../Stylings/MainScreen_styles'
 import Icon from "react-native-vector-icons/FontAwesome";
-import { TouchableOpacity, TouchableHighlight } from "react-native-gesture-handler";
+import { TouchableOpacity,} from "react-native-gesture-handler";
 import * as firebase from 'firebase';
 import firebaseConfig from '../config';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import { StackActions, NavigationActions } from 'react-navigation';
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -28,13 +27,9 @@ export default class MainScreen extends React.Component {
       willLoad: false,
     };
     firebase.auth().onAuthStateChanged(function(user){
-      if(user)
+      if(user && firebase.auth().currentUser.emailVerified)
       {
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'DashBoardScreen' })]
-        });
-        this.props.navigation.dispatch(resetAction);
+        this.props.navigation.navigate('LoginScreen');
       }
       else
       {
@@ -102,8 +97,6 @@ export default class MainScreen extends React.Component {
                     </Text>
                   </View>
                   </TouchableNativeFeedback>
-                 
-                
 
                 <View
                   style={{
@@ -159,80 +152,10 @@ export default class MainScreen extends React.Component {
     else
     {
       return (
-        <View style={{ flex:1,alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Hello</Text>
+        <View>
+
         </View>
       );
     }
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "stretch",
-    justifyContent: "center",
-    backgroundColor: "#00FFFF"
-  },
-  ParentBox:{
-    height: '100%',
-    justifyContent: "space-around",
-    alignItems: "center",
-
-  },
-  logoBox: {
-    width: RFPercentage(35),
-    height: RFPercentage(35),
-    backgroundColor: "rgba(0, 175, 181, 0.5)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: RFPercentage(50),
-    
-  },
-  logoParent:{
-    width: RFPercentage(35),
-    height: RFPercentage(35),
-    alignItems: 'center',
-    justifyContent: 'center',
-
-  },
-  buttonBox: {
-    height: '20%',
-    width: '100%',
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  apiBox: {
-    width: '65%',
-    height: '10%',
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    top: 20
-  },
-  TextStylings: {
-    color: "#FFF",
-    fontSize: RFPercentage(6),
-    fontFamily: "NicotineRegular",
-    transform: [{ rotate: "-8deg" }]
-  },
-  LoginButton: {
-    backgroundColor: "rgba(0, 175, 181, 1)",
-    height: '35%',
-    width: '86%',
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 30,
-  },
-  Logo: {
-    height: RFPercentage(60),
-    width: RFPercentage(60),
-    position: "absolute",
-    zIndex: 1,
-    top: RFPercentage(-12)
-  },
-  Icons: {
-    marginBottom: 25,
-    flexDirection: "row"
-  }
-});

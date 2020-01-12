@@ -3,12 +3,15 @@ import { Text, View, TouchableNativeFeedback, ActivityIndicator } from "react-na
 import * as Font from "expo-font";
 import {
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
 } from "react-native-gesture-handler";
+import styles from '../Stylings/SignUpScreen_styles'
 import Icon from "react-native-vector-icons/FontAwesome";
-import { signUpAndCreateUser } from '../Credentials/ManageUsers';
-
+import * as firebase from 'firebase';
+import firebaseConfig from '../config';
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 export class SignUp extends Component {
   constructor() {
@@ -33,7 +36,16 @@ export class SignUp extends Component {
     (this.state.username) && 
     (this.state.password))
     {
-      signUpAndCreateUser(this.state.Full_Name,this.state.email,this.state.username,this.state.password,this);
+        firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
+        .then(()=>{
+          this.props.navigation.navigate('EmailVerification');
+        })
+        .catch(function(error){
+          this.setState({ Full_Name: '', email: '', username: '', password: ''});
+            // if(!error==="undefined is not an object (evaluating 'props.navigation.navigate')")
+            // alert(error+'\n Please try Again.');
+            alert(error);
+        }.bind(this))
     }
   }
   async componentDidMount() {
@@ -228,63 +240,3 @@ export class SignUp extends Component {
 }
 
 export default SignUp;
-
-const styles = {
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "stretch"
-  },
-  Heading: {
-    alignItems: "center"
-  },
-  InputParent: {
-    height: 350,
-    alignItems: "stretch",
-    justifyContent: "space-between"
-  },
-  Buttons: {
-    height: 30,
-    backgroundColor: "#16dae0",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 5,
-    margin: 5,
-    top: 10
-  },
-  ParentBox: {
-    top: 50,
-    height: 300,
-    margin: 20,
-    justifyContent: "space-between"
-  },
-  TextStylings: {
-    fontSize: 25,
-    color: "#141413",
-    fontFamily: "KulimPark"
-  },
-  Inputs: {
-    top: 10,
-    height: 50,
-    borderColor: "#72e8ed",
-    marginRight: 20,
-    borderRadius: 10,
-    paddingLeft: 20,
-    fontFamily: "KulimPark"
-  },
-  ButtonBox: {
-    height: 150,
-    marginRight: 20,
-    alignItems: "stretch",
-    top: 40
-  },
-  DisableButton: {
-    height: 30,
-    backgroundColor: "rgba(211, 219, 219,0.5)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 5,
-    margin: 5,
-    top: 10
-  }
-};

@@ -3,10 +3,10 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import LogIn from './Screens/LogIn';
 import SignUp from './Screens/SignUp';
-import DashBoardScreen from './Screens/DashBoard'
+import EmailVerification from './Screens/EmailVerification'
 import * as firebase from 'firebase';
 import firebaseConfig from './config';
-import { StackActions, NavigationActions } from 'react-navigation';
+import DashBoard from './LoggedInUser/Dashboard'
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -22,7 +22,8 @@ LogIn.navigationOptions={
 SignUp.navigationOptions={
   header: null
 }
-DashBoardScreen.navigationOptions={
+
+EmailVerification.navigationOptions={
   header: null
 }
 
@@ -31,7 +32,8 @@ const AppContainer = createStackNavigator(
     MainScreen: MainScreen,
     LoginScreen: LogIn,
     SignUpScreen: SignUp,
-    DashBoardScreen: DashBoardScreen
+    EmailVerification: EmailVerification,
+    DashBoard: DashBoard
   },
   {
     initialRouteName: 'MainScreen',

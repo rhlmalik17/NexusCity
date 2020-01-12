@@ -3,11 +3,13 @@ import { Text, View, TouchableNativeFeedback, ActivityIndicator } from "react-na
 import * as Font from "expo-font";
 import {
   TextInput,
-  TouchableHighlight,
   TouchableOpacity
 } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { signInUser } from '../Credentials/ManageUsers';
+import styles from '../Stylings/LoginScreen_styles';
+import * as firebase from 'firebase';
+import firebaseConfig from '../config';
+import { StackActions, NavigationActions } from 'react-navigation';
 export class LogIn extends Component {
   constructor() {
     super();
@@ -19,15 +21,62 @@ export class LogIn extends Component {
       fontsLoaded: false,
       username: '',
       password: '',
+      willLoad: false
     };
-    
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    this.checkAndLogin=this.checkAndLogin.bind(this);
+    firebase.auth().onAuthStateChanged(function(user){
+      if(user)
+      {
+        if(firebase.auth().currentUser.emailVerified)
+        {
+          const resetAction = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'DashBoard' })]
+          });
+          this.props.navigation.dispatch(resetAction);
+          // this.props.navigation.navigate('DashBoard');
+        }
+        else if(!firebase.auth().currentUser.emailVerified)
+        {
+          this.setState({willLoad: true})
+        }
+      }
+      else
+      {
+        this.setState({willLoad: true})
+      }
+    }.bind(this));
   }
   checkAndLogin()
   {
     if((this.state.username && this.state.password))
     {
-    signInUser(this.state.username,this.state.password,this);
-     
+      let username=this.state.username;
+      let password=this.state.password;
+        firebase.auth().signInWithEmailAndPassword(username,password)
+        .then(()=>{
+          this.setState({ username: '', password: '' });
+          let user=firebase.auth().currentUser;
+          if(user.emailVerified)
+          {
+            const resetAction = StackActions.reset({
+              index: 0,
+              actions: [NavigationActions.navigate({ routeName: 'DashBoard' })]
+            });
+            this.props.navigation.dispatch(resetAction);
+          }
+          else
+          {
+            this.props.navigation.navigate('EmailVerification');
+          }
+        })
+        .catch(function(error){
+          this.setState({ username: '',password: '' })
+          alert(error);
+        }.bind(this));
     }
     else
     {
@@ -41,7 +90,7 @@ export class LogIn extends Component {
     await this.setState({ fontsLoaded: true });
   }
   render() {
-    if(!this.state.fontsLoaded)
+    if(!this.state.fontsLoaded || !this.state.willLoad)
     {
       return <ActivityIndicator size="large"/>
     }
@@ -133,8 +182,7 @@ export class LogIn extends Component {
             </TouchableNativeFeedback>
             <TouchableOpacity onPress={()=>this.props.navigation.navigate('SignUpScreen')}>
               <Text style={{...styles.TextStylings, fontSize: 15, marginTop: 25,color: '#12b0b5', alignSelf: 'center'}}>New Here? Register Here!</Text>
-            </TouchableOpacity>
-                  
+            </TouchableOpacity>   
           </View>
         </View>
       </View>
@@ -143,62 +191,3 @@ export class LogIn extends Component {
 }
 
 export default LogIn;
-
-const styles = {
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "stretch",
-  },
-  Heading: {
-    alignItems: "center"
-  },
-  InputParent: {
-    height: 100,
-    alignItems: "stretch",
-    justifyContent: "space-between"
-  },
-  Buttons: {
-    height: 30,
-    backgroundColor: '#16dae0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-    margin: 5
-  },
-  ParentBox: {
-    top: 50,
-    height: 300,
-    margin: 20,
-    justifyContent: "space-between"
-  },
-  TextStylings: {
-    fontSize: 25,
-    color: "#141413",
-    fontFamily: "KulimPark"
-  },
-  Inputs: {
-    top: 10,
-    height: 50,
-    borderColor: "#72e8ed",
-    marginRight: 20,
-    borderRadius: 10,
-    paddingLeft: 20,
-    fontFamily: "KulimPark"
-  },
-  ButtonBox: {
-    top: 100,
-    backgroundColor: '',
-    height: 150,
-    marginRight: 20,
-    alignItems: 'stretch'
-  },
-  DisableButton: {
-    height: 30,
-    backgroundColor: 'rgba(211, 219, 219,0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-    margin: 5
-  }
-};
