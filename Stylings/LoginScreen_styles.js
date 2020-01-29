@@ -40,7 +40,8 @@ export default styles = StyleSheet.create({
       marginRight: 20,
       borderRadius: 10,
       paddingLeft: 20,
-      fontFamily: "KulimPark"
+      fontFamily: "KulimPark",
+   
     },
     ButtonBox: {
       top: 100,
@@ -54,7 +55,8 @@ export default styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 5,
-      margin: 5
+      margin: 5,
+      
     }
   });
 

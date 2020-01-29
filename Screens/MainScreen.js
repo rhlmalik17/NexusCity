@@ -7,6 +7,7 @@ import {
   TouchableNativeFeedback,
   ActivityIndicator,
   StatusBar,
+  BackHandler
 } from "react-native";
 import * as Font from "expo-font";
 import styles from '../Stylings/MainScreen_styles'
@@ -37,6 +38,12 @@ export default class MainScreen extends React.Component {
       }
     }.bind(this));
    
+  }
+  componentWillMount()
+  {
+    BackHandler.addEventListener('hardwareBackPress', function(){
+      return true;
+    })
   }
   async componentDidMount() {
     await Font.loadAsync({

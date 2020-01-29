@@ -11,8 +11,13 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
+DashBoard.navigationOptions={
+  headerLeft: null,
+}
+
 MainScreen.navigationOptions={
   header: null,
+  headerLeft: null,
 }
 
 LogIn.navigationOptions={

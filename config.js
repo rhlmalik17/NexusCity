@@ -1,3 +1,4 @@
+
 var firebaseConfig = {
     apiKey: "AIzaSyAbAUqXereV8BFXuC5Z9bQzS7SHoCCU3Qc",
     authDomain: "nexusc-f7aca.firebaseapp.com",

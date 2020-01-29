@@ -56,7 +56,7 @@ export class EmailVerification extends Component {
           <View style={styles.NavigateMessage}>
           {/* <Text>Verified: { (firebase.auth().currentUser.emailVerified) ? 'True' : 'False'}</Text> */}
           <TouchableOpacity onPress={() => this.props.navigation.navigate("LoginScreen")}>
-            <Text style={{fontFamily: 'KulimPark',color: '#12b0b5'}}> Email Verified? Click here to LogIn.</Text>
+            <Text style={{fontFamily: 'KulimPark',color: '#12b0b5', }}> Email Verified? Click here to LogIn.</Text>
           </TouchableOpacity>
           </View>
           </View>
@@ -78,11 +78,10 @@ export class EmailVerification extends Component {
 export default EmailVerification;
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       alignItems: 'stretch',
       justifyContent: 'flex-start'
     },Parent:{
-      flex: 0.5,
+      height: RFPercentage(60),
       alignItems: 'stretch',
       justifyContent: 'space-around',
       margin: RFPercentage(4),
