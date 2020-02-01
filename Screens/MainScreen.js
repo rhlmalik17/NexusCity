@@ -39,12 +39,7 @@ export default class MainScreen extends React.Component {
     }.bind(this));
    
   }
-  componentWillMount()
-  {
-    BackHandler.addEventListener('hardwareBackPress', function(){
-      return true;
-    })
-  }
+
   async componentDidMount() {
     await Font.loadAsync({
       NicotineRegular: require("../Fonts/Nicotine-Regular.ttf"),

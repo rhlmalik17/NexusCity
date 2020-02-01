@@ -17,7 +17,6 @@ DashBoard.navigationOptions={
 
 MainScreen.navigationOptions={
   header: null,
-  headerLeft: null,
 }
 
 LogIn.navigationOptions={

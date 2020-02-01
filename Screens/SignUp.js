@@ -55,6 +55,12 @@ export class SignUp extends Component {
                 firebase.database().ref('usernames/' + firebase.auth().currentUser.uid).set({
                   username: this.state.username,
                 });
+                this.setState({
+                  Full_Name: "",
+                  email: "",
+                  username: "",
+                  password: ""
+                });
             this.props.navigation.navigate("EmailVerification");
           })
           .catch(
@@ -75,6 +81,7 @@ export class SignUp extends Component {
       }
     }
   };
+
   checkIfUserNameExist= async (username)=> {
     var query =  firebase
       .database()
