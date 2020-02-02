@@ -1,11 +1,9 @@
-import React, { Component } from "react";
-import { Text, View, StyleSheet, ActivityIndicator , Button, BackHandler, TabBarIOS } from "react-native";
-import * as firebase from "firebase";
+import React, { Component } from 'react';
+import { Text, View, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import firebaseConfig from "../config";
-import { createAppContainer } from 'react-navigation';
-
+import { createAppContainer} from 'react-navigation';
+import Profile from './Screens/Profile';
 // export class DashBoard extends Component {
 //   constructor() {
 //     super();
@@ -57,14 +55,6 @@ import { createAppContainer } from 'react-navigation';
 //         }
 //       }
 //   }
-function Profile()
-{
-  return (
-    <View style={styles.container}>
-      <Text>Profile</Text>
-    </View>
-  )
-}
 function Messages()
 {
   return (

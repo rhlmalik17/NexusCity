@@ -13,6 +13,7 @@ if (!firebase.apps.length) {
 
 DashBoard.navigationOptions={
   headerLeft: null,
+  header: null
 }
 
 MainScreen.navigationOptions={
