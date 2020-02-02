@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, ActivityIndicator , Button, BackHandler } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator , Button, BackHandler, TabBarIOS } from "react-native";
 import * as firebase from "firebase";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import firebaseConfig from "../config";
 import { createAppContainer } from 'react-navigation';
@@ -56,11 +57,11 @@ import { createAppContainer } from 'react-navigation';
 //         }
 //       }
 //   }
-function Settings()
+function Profile()
 {
   return (
     <View style={styles.container}>
-      <Text>Settings</Text>
+      <Text>Profile</Text>
     </View>
   )
 }
@@ -82,13 +83,38 @@ function Friends()
 }
 const DashBoard = createAppContainer( createMaterialBottomTabNavigator(
   {
-    Messages: Messages,
-    Settings: Settings,
-    Friends: Friends,
+    Messages: { 
+      screen: Messages,
+      navigationOptions: {
+        tabBarLabel: 'Messages',
+        tabBarIcon: ({tintColor})=>(
+          <Icon name="ios-quote" size={24} color={tintColor} />
+        )
+      } 
+    },
+    Friends: { screen: Friends,
+      navigationOptions: {
+        tabBarLabel: 'Friends',
+        tabBarIcon: ({tintColor})=>(
+          <Icon name="ios-people" size={24} color={tintColor} />
+        )
+      } 
+    },
+    Profile: { screen: Profile,
+      navigationOptions: {
+        tabBarLabel: 'Profile',
+        tabBarIcon: ({tintColor})=>(
+          <Icon name="ios-person" size={24} color={tintColor} />
+        )
+      } 
+    },
   },
   { 
     initialRouteName: 'Messages',
-    backgroundColor: '#000'
+    activeColor: '#000',
+    barStyle: { backgroundColor: '#fff' },
+    shifting: true,
+    
   }
 ));
 
