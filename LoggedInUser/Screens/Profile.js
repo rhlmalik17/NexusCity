@@ -1,28 +1,45 @@
 import React, { Component } from 'react'
 import { Text, View , StyleSheet, Image } from 'react-native'
+import * as Font from "expo-font";
+import { ActivityIndicator } from 'react-native-paper';
 
 export class Profile extends Component {
     constructor()
     {
         super();
+        this.state={
+            fontsLoaded: false
+        }
     }
+    async componentDidMount() {
+        await Font.loadAsync({
+          WorkSans: require("../Fonts/Work-Sans.ttf"),
+        });
+        await this.setState({ fontsLoaded: true });
+      }
     render() {
+        if(this.state.fontsLoaded)
         return (
             // Parent
             <View style={styles.container}>
-                {/* Profile Picture */}
-                <View style={styles.Profile_Picture}>
-                    
-                        <Image source={require('../Assets/Default_Profile.jpg')} resizeMode="contain" style={{ height: '80%', width: '80%' }} />
-                    
-                    
-                    <View style={styles.Linear_Gradient}>
-                         <Image source={require('../Assets/Linear_Gradient.png')}  resizeMode="stretch" style={{ width: '100%', }} />
+                {/* Upper Flex Box */}
+                <View style={styles.upperBox}>
+                    <View style={styles.headingBox}>
+                        <Text style={{ fontSize: 20, fontFamily: 'WorkSans' }}>MY PROFILE</Text>
                     </View>
-                    
+                    <View>
+                        
+                    </View>
+                    <View>
+
+                    </View>
                 </View>
             </View>
           )
+          else
+          {
+              return <ActivityIndicator size="large"/>
+          }
     }
 }
 
@@ -31,23 +48,26 @@ export default Profile;
 const styles=StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        backgroundColor: '#000',
+        alignItems: 'stretch', 
+    },
+    upperBox:{
+        height: '50%',
+        // backgroundColor: 'red',
+        display: 'flex',
+        justifyContent: 'space-around',
         
     },
-    Profile_Picture: {
-        flex: 0.4,
-        backgroundColor: '#fff',
-        overflow: "hidden",
-        alignItems: 'center',
-        justifyContent: 'center'
+    headingBox: {
+        height: '15%',
+        // backgroundColor: 'green',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    Linear_Gradient: {
-        position: 'absolute',
-        bottom: 0,
-        width: '100%'
+    profilePicture: {
+
+    },
+    displayName: {
+
     }
 
-    
 })

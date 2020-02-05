@@ -79,7 +79,7 @@ const DashBoard = createAppContainer( createMaterialBottomTabNavigator(
         tabBarLabel: 'Messages',
         tabBarIcon: ({tintColor})=>(
           <Icon name="ios-quote" size={24} color={tintColor} />
-        )
+        ),
       } 
     },
     Friends: { screen: Friends,
@@ -101,9 +101,10 @@ const DashBoard = createAppContainer( createMaterialBottomTabNavigator(
   },
   { 
     initialRouteName: 'Messages',
-    activeColor: '#000',
+    activeColor: '#16dae0',
     barStyle: { backgroundColor: '#fff' },
     shifting: true,
+    inactiveColor: 'grey'
     
   }
 ));
