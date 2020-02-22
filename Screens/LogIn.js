@@ -88,6 +88,7 @@ export class LogIn extends Component {
       KulimPark: require("../Fonts/KulimPark-Regular.ttf")
     });
     await this.setState({ fontsLoaded: true });
+   
   }
   render() {
     if(!this.state.fontsLoaded || !this.state.willLoad)
@@ -104,7 +105,7 @@ export class LogIn extends Component {
           <View style={styles.InputParent}>
             <View>
               <Text style={{ ...styles.TextStylings, fontSize: 15 }}>
-                Username
+                Email
               </Text>
 
               <TextInput

@@ -95,6 +95,7 @@ export class SignUp extends Component {
       KulimPark: require("../Fonts/KulimPark-Regular.ttf")
     });
     await this.setState({ fontsLoaded: true });
+    
    
   }
   render() {

@@ -71,7 +71,7 @@ function Friends()
     </View>
   )
 }
-const DashBoard = createAppContainer( createMaterialBottomTabNavigator(
+const DashBoard = createAppContainer(createMaterialBottomTabNavigator(
   {
     Messages: { 
       screen: Messages,
@@ -105,7 +105,6 @@ const DashBoard = createAppContainer( createMaterialBottomTabNavigator(
     barStyle: { backgroundColor: '#fff' },
     shifting: true,
     inactiveColor: 'grey'
-    
   }
 ));
 

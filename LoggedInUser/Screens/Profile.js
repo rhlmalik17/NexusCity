@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import * as Font from "expo-font";
 import { ActivityIndicator } from "react-native-paper";
-import Svg, { Circle, G, Path, Rect, TSpan } from "react-native-svg";
+import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import * as firebase from "firebase";
 import firebaseConfig from "../../config";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
+import { StackActions, NavigationActions } from 'react-navigation';
 export class Profile extends Component {
   constructor() {
     super();
@@ -35,6 +36,19 @@ export class Profile extends Component {
         this.setState({ full_Name: full_name, email: email, username: username });
       });
     await this.setState({ fontsLoaded: true });
+  }
+  logOut =()=>{
+    firebase.auth().signOut().then(()=> {
+      // Sign-out successful.
+      const resetAction = StackActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'MainScreen' })]
+      });
+      this.props.navigation.dispatch(resetAction);
+    }).catch(function(error) {
+      // An error happened.
+      alert(error);
+    });
   }
   render() {
     if (this.state.fontsLoaded)
@@ -200,6 +214,7 @@ export class Profile extends Component {
             </View>
             <TouchableNativeFeedback
                 background={TouchableNativeFeedback.Ripple()}
+                onPress={()=> this.logOut()}
               >
             <View style={styles.button}><Text style={styles.textStylings}>Log Out</Text></View>
           </TouchableNativeFeedback>
@@ -207,7 +222,11 @@ export class Profile extends Component {
         </View>
       );
     else {
-      return <ActivityIndicator size="large" />;
+      return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator  size="large" />
+      </View>
+      ) 
     }
   }
 }

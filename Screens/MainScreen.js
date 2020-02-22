@@ -46,6 +46,7 @@ export default class MainScreen extends React.Component {
       "Open-Sans": require("../Fonts/OpenSans-Regular.ttf")
     });
     await this.setState({ fontsLoaded: true });
+   
   }
   
   render() {
