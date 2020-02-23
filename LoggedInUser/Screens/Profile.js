@@ -1,12 +1,16 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet , Image } from "react-native";
 import * as Font from "expo-font";
 import { ActivityIndicator } from "react-native-paper";
 import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import * as firebase from "firebase";
 import firebaseConfig from "../../config";
-import { TouchableNativeFeedback } from "react-native-gesture-handler";
+import { TouchableNativeFeedback, TouchableOpacity } from "react-native-gesture-handler";
 import { StackActions, NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/Ionicons';
+import UserPermissions from '../Utilities/UserPermissions';
+import * as ImagePicker from 'expo-image-picker';
+
 export class Profile extends Component {
   constructor() {
     super();
@@ -14,7 +18,8 @@ export class Profile extends Component {
       firebase.initializeApp(firebaseConfig);
     }
     this.state = {
-      fontsLoaded: false
+      fontsLoaded: false,
+      avatar: null
     };
   }
   async componentDidMount() {
@@ -37,19 +42,34 @@ export class Profile extends Component {
       });
     await this.setState({ fontsLoaded: true });
   }
+
   logOut =()=>{
     firebase.auth().signOut().then(()=> {
-      // Sign-out successful.
       const resetAction = StackActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'MainScreen' })]
       });
       this.props.navigation.dispatch(resetAction);
     }).catch(function(error) {
-      // An error happened.
       alert(error);
     });
   }
+
+  handlePickAvatar = async ()=>{
+
+    UserPermissions.getCameraPermission();
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 4]
+    });
+
+    if (!result.cancelled) {
+      this.setState({ avatar: result.uri });
+    }
+  }
+
   render() {
     if (this.state.fontsLoaded)
       return (
@@ -70,22 +90,12 @@ export class Profile extends Component {
             </View>
             <View style={styles.profilePicture}>
               <View style={styles.profile}>
-                <Svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="190"
-                  height="190"
-                  viewBox="0 0 135 135"
-                >
-                  <Circle
-                    id="Ellipse_1"
-                    data-name="Ellipse 1"
-                    cx="66"
-                    cy="66"
-                    r="66"
-                    transform="translate(0 0)"
-                    fill="#E8EBF1"
-                  />
-                </Svg>
+
+                <TouchableOpacity style={styles.profilePhoto} onPress={()=> this.handlePickAvatar()}>
+                  <Image source={{ uri: this.state.avatar }} style={styles.avatar}/>
+                  <Icon name="ios-add" size={25} color={'#16dae0'} style={{ display: (this.state.avatar!=null) ? 'none' : 'flex' }} />
+                </TouchableOpacity>
+
                 <View style={styles.cameraIcon}>
                   <Svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -285,5 +295,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white"
   },
+  profilePhoto:{
+    height: 190,
+    width: 190,
+    backgroundColor: '#E8EBF1',
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  avatar: {
+    height: 175,
+    width: 175,
+    borderRadius: 100,
+    position: 'absolute'
+  }
+
 
 });

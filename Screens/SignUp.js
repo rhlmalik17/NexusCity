@@ -11,9 +11,6 @@ import styles from "../Stylings/SignUpScreen_styles";
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as firebase from "firebase";
 import firebaseConfig from "../config";
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 export class SignUp extends Component {
   constructor() {
@@ -32,6 +29,10 @@ export class SignUp extends Component {
       password: "",
     };
     this.flag=false;
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
   }
   bundleDataAndSend = () => {
     if (
@@ -46,12 +47,14 @@ export class SignUp extends Component {
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then(() => {
+
                 firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
                   full_Name: this.state.Full_Name,
                   username: this.state.username,
                   email: this.state.email,
                   password: this.state.password,
                 });
+
                 this.setState({
                   Full_Name: "",
                   email: "",
