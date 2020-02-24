@@ -46,14 +46,14 @@ export class SignUp extends Component {
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
-          .then(() => {
+          .then(async () => {
 
                 firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
                   full_Name: this.state.Full_Name,
                   username: this.state.username,
                   email: this.state.email,
                   password: this.state.password,
-                });
+                });     
 
                 this.setState({
                   Full_Name: "",

@@ -38,8 +38,16 @@ export class Profile extends Component {
           (snapshot.val() && snapshot.val().username) || "Anonymous";
           var email =
           (snapshot.val() && snapshot.val().email) || "Anonymous";
+          var profileName =
+          (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
+
+          firebase.storage().ref().child("ProfileImages/"+profileName).getDownloadURL().then((url)=>{
+            this.setState({avatar: url});
+          });
+
         this.setState({ full_Name: full_name, email: email, username: username });
       });
+      
     await this.setState({ fontsLoaded: true });
   }
 
@@ -66,6 +74,40 @@ export class Profile extends Component {
     });
 
     if (!result.cancelled) {
+
+      let response = await fetch(result.uri);
+      let blob = await response.blob();
+      let fileExtension = (result.uri+"").split('.').pop();
+
+      let storageRef = firebase.storage().ref().child("ProfileImages/"+firebase.auth().currentUser.uid+"."+fileExtension);
+
+      await firebase
+      .database()
+      .ref("/users/" + firebase.auth().currentUser.uid)
+      .once("value")
+      .then(snapshot => {
+        var oldProfile =
+          (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
+          
+          firebase.storage().ref().child("ProfileImages/"+oldProfile).delete()
+          .catch((error)=>{
+          });
+          
+      }).catch(error =>{
+      })
+
+
+      storageRef.put(blob).then(async ()=>{
+        await firebase.database().ref('users/' + firebase.auth().currentUser.uid).update({
+          profileImage: firebase.auth().currentUser.uid+"."+fileExtension
+        });    
+        await firebase.storage().ref().child('ProfileImages/'+firebase.auth().currentUser.uid+"."+fileExtension).getDownloadURL().then((url)=>{
+          this.setState({ avatar: url});
+        });
+        
+      }).catch((error)=>{
+      })
+
       this.setState({ avatar: result.uri });
     }
   }
@@ -92,7 +134,7 @@ export class Profile extends Component {
               <View style={styles.profile}>
 
                 <TouchableOpacity style={styles.profilePhoto} onPress={()=> this.handlePickAvatar()}>
-                  <Image source={{ uri: this.state.avatar }} style={styles.avatar}/>
+                  <Image source={{uri: this.state.avatar}} style={styles.avatar}/>
                   <Icon name="ios-add" size={25} color={'#16dae0'} style={{ display: (this.state.avatar!=null) ? 'none' : 'flex' }} />
                 </TouchableOpacity>
 
