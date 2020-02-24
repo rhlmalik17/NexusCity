@@ -8,17 +8,25 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/react-native-action-sheet": "^3.5.0",
     "expo": "~36.0.0",
+    "expo-constants": "~8.0.0",
     "expo-google-app-auth": "^8.0.0",
+    "expo-image-picker": "~8.0.1",
+    "expo-permissions": "~8.0.0",
+    "file-url": "^3.0.0",
     "firebase": "^7.6.1",
     "install": "^0.13.0",
     "npm": "^6.13.4",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-actionsheet": "^2.4.2",
     "react-native-fit-image": "^1.5.5",
     "react-native-fontawesome": "^7.0.0",
     "react-native-gesture-handler": "^1.5.3",
+    "react-native-image-view": "^2.1.9",
+    "react-native-image-viewing": "^0.1.6",
     "react-native-paper": "^3.5.1",
     "react-native-responsive-fontsize": "^0.4.2",
     "react-native-restart": "0.0.14",
@@ -28,10 +36,7 @@
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.0.10",
     "react-navigation-material-bottom-tabs": "^2.1.5",
-    "react-navigation-stack": "^1.10.3",
-    "expo-constants": "~8.0.0",
-    "expo-permissions": "~8.0.0",
-    "expo-image-picker": "~8.0.1"
+    "react-navigation-stack": "^1.10.3"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

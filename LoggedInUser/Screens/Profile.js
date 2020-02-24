@@ -1,25 +1,63 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet , Image } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import * as Font from "expo-font";
 import { ActivityIndicator } from "react-native-paper";
 import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import * as firebase from "firebase";
 import firebaseConfig from "../../config";
-import { TouchableNativeFeedback, TouchableOpacity } from "react-native-gesture-handler";
-import { StackActions, NavigationActions } from 'react-navigation';
-import Icon from 'react-native-vector-icons/Ionicons';
-import UserPermissions from '../Utilities/UserPermissions';
-import * as ImagePicker from 'expo-image-picker';
+import {
+  TouchableNativeFeedback,
+  TouchableOpacity
+} from "react-native-gesture-handler";
+import { StackActions, NavigationActions } from "react-navigation";
+import Icon from "react-native-vector-icons/Ionicons";
+import UserPermissions from "../Utilities/UserPermissions";
+import * as ImagePicker from "expo-image-picker";
+import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet";
+import ImageView from 'react-native-image-view';
 
 export class Profile extends Component {
+  
   constructor() {
     super();
+
+    const actionSheetStyles = StyleSheet.create({
+      container:{
+        flexDirection: 'row',
+      },
+      textStylings:{
+        color: "#484a49",
+        fontSize: 15,
+        marginLeft: '2%'
+      }
+    });
+
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     this.state = {
       fontsLoaded: false,
-      avatar: null
+      avatar: null,
+      options: [
+        <View style={actionSheetStyles.container}>
+          <Icon name="ios-eye" size={24} color={'#16dae0'}/>
+          <Text style={actionSheetStyles.textStylings}>View Profile Picture</Text>
+        </View>,
+        <View style={actionSheetStyles.container}>
+        <Icon name="ios-add" size={24} color={'#16dae0'} />
+        <Text style={actionSheetStyles.textStylings}>Upload A New Profile Picture</Text>
+      </View>,
+      <View style={actionSheetStyles.container}>
+      <Icon name="ios-trash" size={24} color={'#16dae0'} />
+      <Text style={actionSheetStyles.textStylings}>Delete Profile Photo</Text>
+    </View>,
+      <View style={actionSheetStyles.container}>
+      <Icon name="ios-close" size={24} color={'#d96666'}/>
+      <Text style={actionSheetStyles.textStylings}>Cancel</Text>
+    </View>
+      ],
+      isViewerVisible: false,
+      defaultProfile: 'https://drive.google.com/uc?export=view&id=1OhKo6sBVYzQQddpEx-KxoLLrVJ5WdqLG'
     };
   }
   async componentDidMount() {
@@ -31,92 +69,169 @@ export class Profile extends Component {
       .database()
       .ref("/users/" + firebase.auth().currentUser.uid)
       .once("value")
-      .then(snapshot => {
+      .then(async snapshot => {
         var full_name =
           (snapshot.val() && snapshot.val().full_Name) || "Anonymous";
-          var username =
+        var username =
           (snapshot.val() && snapshot.val().username) || "Anonymous";
-          var email =
-          (snapshot.val() && snapshot.val().email) || "Anonymous";
-          var profileName =
+        var email = (snapshot.val() && snapshot.val().email) || "Anonymous";
+        var profileName =
           (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
 
-          firebase.storage().ref().child("ProfileImages/"+profileName).getDownloadURL().then((url)=>{
-            this.setState({avatar: url});
+        await firebase
+          .storage()
+          .ref()
+          .child("ProfileImages/" + profileName)
+          .getDownloadURL()
+          .then(url => {
+            this.setState({ avatar: url });
+          }).catch((error)=>{
+            this.setState({ avatar: './assets/default_Profile.png'});
           });
 
-        this.setState({ full_Name: full_name, email: email, username: username });
+        this.setState({
+          full_Name: full_name,
+          email: email,
+          username: username
+        });
       });
-      
+
     await this.setState({ fontsLoaded: true });
   }
 
-  logOut =()=>{
-    firebase.auth().signOut().then(()=> {
-      const resetAction = StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'MainScreen' })]
+  logOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: "MainScreen" })]
+        });
+        this.props.navigation.dispatch(resetAction);
+      })
+      .catch(function(error) {
+        alert(error);
       });
-      this.props.navigation.dispatch(resetAction);
-    }).catch(function(error) {
-      alert(error);
-    });
-  }
+  };
 
-  handlePickAvatar = async ()=>{
-
+  handlePickAvatar = async () => {
     UserPermissions.getCameraPermission();
 
     let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 4]
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4]
     });
 
     if (!result.cancelled) {
-
       let response = await fetch(result.uri);
       let blob = await response.blob();
-      let fileExtension = (result.uri+"").split('.').pop();
+      let fileExtension = (result.uri + "").split(".").pop();
 
-      let storageRef = firebase.storage().ref().child("ProfileImages/"+firebase.auth().currentUser.uid+"."+fileExtension);
+      let storageRef = firebase
+        .storage()
+        .ref()
+        .child(
+          "ProfileImages/" +
+            firebase.auth().currentUser.uid +
+            "." +
+            fileExtension
+        );
 
       await firebase
-      .database()
-      .ref("/users/" + firebase.auth().currentUser.uid)
-      .once("value")
-      .then(snapshot => {
-        var oldProfile =
-          (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
-          
-          firebase.storage().ref().child("ProfileImages/"+oldProfile).delete()
-          .catch((error)=>{
-          });
-          
-      }).catch(error =>{
-      })
+        .database()
+        .ref("/users/" + firebase.auth().currentUser.uid)
+        .once("value")
+        .then(snapshot => {
+          var oldProfile =
+            (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
 
+          firebase
+            .storage()
+            .ref()
+            .child("ProfileImages/" + oldProfile)
+            .delete()
+            .catch(error => {});
+        })
+        .catch(error => {});
 
-      storageRef.put(blob).then(async ()=>{
-        await firebase.database().ref('users/' + firebase.auth().currentUser.uid).update({
-          profileImage: firebase.auth().currentUser.uid+"."+fileExtension
-        });    
-        await firebase.storage().ref().child('ProfileImages/'+firebase.auth().currentUser.uid+"."+fileExtension).getDownloadURL().then((url)=>{
-          this.setState({ avatar: url});
-        });
-        
-      }).catch((error)=>{
-      })
+      storageRef
+        .put(blob)
+        .then(async () => {
+          await firebase
+            .database()
+            .ref("users/" + firebase.auth().currentUser.uid)
+            .update({
+              profileImage:
+                firebase.auth().currentUser.uid + "." + fileExtension
+            });
+          await firebase
+            .storage()
+            .ref()
+            .child(
+              "ProfileImages/" +
+                firebase.auth().currentUser.uid +
+                "." +
+                fileExtension
+            )
+            .getDownloadURL()
+            .then(url => {
+              this.setState({ avatar: url });
+            });
+        })
+        .catch(error => {});
 
       this.setState({ avatar: result.uri });
+    }
+  };
+
+  imageViewHandle = () => {
+    this.setState({ isViewerVisible: true })
+  };
+
+
+  actionSheetHandle = (index) => {
+    switch(index) {
+      case 0:
+        this.imageViewHandle();
+        break;
+      case 1:
+        this.handlePickAvatar();
+        break;
     }
   }
 
   render() {
+
+    
+    const images = [
+      {
+        source:{
+          uri: (this.state.avatar) ? this.state.avatar : this.state.defaultProfile
+        }
+      },
+  ];
+
     if (this.state.fontsLoaded)
       return (
         // Parent
         <View style={styles.container}>
+            <ImageView
+              images={images}
+              isVisible={this.state.isViewerVisible}
+              onClose={()=> this.setState({ isViewerVisible : false })}
+              isSwipeCloseEnabled={true}
+              isPinchZoomEnabled={false}
+             />
+
+          <ActionSheet
+            ref={o => (this.ActionSheet = o)}
+            options={this.state.options}
+            cancelButtonIndex={3}
+            onPress={index=> this.actionSheetHandle(index)}
+          />
+
           {/* Upper Flex Box */}
           <View style={styles.upperBox}>
             <View style={styles.headingBox}>
@@ -132,10 +247,22 @@ export class Profile extends Component {
             </View>
             <View style={styles.profilePicture}>
               <View style={styles.profile}>
-
-                <TouchableOpacity style={styles.profilePhoto} onPress={()=> this.handlePickAvatar()}>
-                  <Image source={{uri: this.state.avatar}} style={styles.avatar}/>
-                  <Icon name="ios-add" size={25} color={'#16dae0'} style={{ display: (this.state.avatar!=null) ? 'none' : 'flex' }} />
+                <TouchableOpacity
+                  style={styles.profilePhoto}
+                  onPress={() => this.ActionSheet.show()}
+                >
+                  <Image
+                    source={{ uri: (this.state.avatar) ? this.state.avatar : this.state.defaultProfile }}
+                    style={styles.avatar}
+                  />
+                  <Icon
+                    name="ios-add"
+                    size={25}
+                    color={"#16dae0"}
+                    style={{
+                      display: this.state.avatar != null ? "none" : "flex"
+                    }}
+                  />
                 </TouchableOpacity>
 
                 <View style={styles.cameraIcon}>
@@ -253,32 +380,34 @@ export class Profile extends Component {
               </View>
             </View>
             <View style={styles.details}>
-            <View style={styles.subDetails}>
-                  <Text style={{color: '#707070' , fontSize: 18}}>Username</Text>
-                  <Text>{this.state.username}</Text>
+              <View style={styles.subDetails}>
+                <Text style={{ color: "#707070", fontSize: 18 }}>Username</Text>
+                <Text>{this.state.username}</Text>
+              </View>
+              <View style={styles.subDetails}>
+                <Text style={{ color: "#707070", fontSize: 18 }}>Email</Text>
+                <Text>{this.state.email}</Text>
+              </View>
             </View>
-            <View style={styles.subDetails}>
-                  <Text style={{color: '#707070' , fontSize: 18}}>Email</Text>
-                  <Text>{this.state.email}</Text>
+          </View>
+          <TouchableNativeFeedback
+            background={TouchableNativeFeedback.Ripple()}
+            onPress={() => this.logOut()}
+          >
+            <View style={styles.button}>
+              <Text style={styles.textStylings}>Log Out</Text>
             </View>
-            </View>
-            
-            </View>
-            <TouchableNativeFeedback
-                background={TouchableNativeFeedback.Ripple()}
-                onPress={()=> this.logOut()}
-              >
-            <View style={styles.button}><Text style={styles.textStylings}>Log Out</Text></View>
           </TouchableNativeFeedback>
-         
         </View>
       );
     else {
       return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator  size="large" />
-      </View>
-      ) 
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      );
     }
   }
 }
@@ -313,44 +442,43 @@ const styles = StyleSheet.create({
   lowerHeading: {
     alignItems: "center",
     height: "15%",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
-  details:{
-    justifyContent: 'space-between',
-  },subDetails:{
+  details: {
+    justifyContent: "space-between"
+  },
+  subDetails: {
     marginLeft: "10%",
     marginBottom: "10%",
-    justifyContent: 'space-between' 
+    justifyContent: "space-between"
   },
-  lowerBox:{
-    justifyContent: 'space-around'
+  lowerBox: {
+    justifyContent: "space-around"
   },
-  button:{
-      height: 30,
-      backgroundColor: "#16dae0",
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 5,
-      marginHorizontal: "10%",
+  button: {
+    height: 30,
+    backgroundColor: "#16dae0",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+    marginHorizontal: "10%"
   },
-  textStylings:{
+  textStylings: {
     fontSize: 15,
     color: "white"
   },
-  profilePhoto:{
+  profilePhoto: {
     height: 190,
     width: 190,
-    backgroundColor: '#E8EBF1',
+    backgroundColor: "#E8EBF1",
     borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   avatar: {
     height: 175,
     width: 175,
     borderRadius: 100,
-    position: 'absolute'
+    position: "absolute"
   }
-
-
 });
