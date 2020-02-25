@@ -15,6 +15,8 @@ import UserPermissions from "../Utilities/UserPermissions";
 import * as ImagePicker from "expo-image-picker";
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet";
 import ImageView from 'react-native-image-view';
+import styles from '../Stylings/Profile_Stylings';
+
 
 export class Profile extends Component {
   
@@ -138,24 +140,7 @@ export class Profile extends Component {
             "." +
             fileExtension
         );
-
-      await firebase
-        .database()
-        .ref("/users/" + firebase.auth().currentUser.uid)
-        .once("value")
-        .then(snapshot => {
-          var oldProfile =
-            (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
-
-          firebase
-            .storage()
-            .ref()
-            .child("ProfileImages/" + oldProfile)
-            .delete()
-            .catch(error => {});
-        })
-        .catch(error => {});
-
+      this.deleteAvatarHandler();
       storageRef
         .put(blob)
         .then(async () => {
@@ -190,6 +175,25 @@ export class Profile extends Component {
     this.setState({ isViewerVisible: true })
   };
 
+  deleteAvatarHandler = async () =>{
+    await firebase
+        .database()
+        .ref("/users/" + firebase.auth().currentUser.uid)
+        .once("value")
+        .then(snapshot => {
+          let oldProfile =
+            (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
+
+          firebase
+            .storage()
+            .ref()
+            .child("ProfileImages/" + oldProfile)
+            .delete()
+            .catch(error => {});
+        })
+        .catch(error => {});
+        
+  }
 
   actionSheetHandle = (index) => {
     switch(index) {
@@ -198,6 +202,10 @@ export class Profile extends Component {
         break;
       case 1:
         this.handlePickAvatar();
+        break;
+      case 2:
+        this.deleteAvatarHandler();
+        this.setState({ avatar: this.state.defaultProfile });
         break;
     }
   }
@@ -414,71 +422,3 @@ export class Profile extends Component {
 
 export default Profile;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "stretch"
-  },
-  upperBox: {
-    height: "50%",
-    display: "flex",
-    justifyContent: "space-evenly"
-  },
-  headingBox: {
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  profilePicture: {
-    alignItems: "center"
-  },
-  profile: {
-    justifyContent: "center",
-    paddingRight: "3%"
-  },
-  cameraIcon: {
-    position: "absolute",
-    alignSelf: "flex-end"
-  },
-  lowerHeading: {
-    alignItems: "center",
-    height: "15%",
-    justifyContent: "space-between"
-  },
-  details: {
-    justifyContent: "space-between"
-  },
-  subDetails: {
-    marginLeft: "10%",
-    marginBottom: "10%",
-    justifyContent: "space-between"
-  },
-  lowerBox: {
-    justifyContent: "space-around"
-  },
-  button: {
-    height: 30,
-    backgroundColor: "#16dae0",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 5,
-    marginHorizontal: "10%"
-  },
-  textStylings: {
-    fontSize: 15,
-    color: "white"
-  },
-  profilePhoto: {
-    height: 190,
-    width: 190,
-    backgroundColor: "#E8EBF1",
-    borderRadius: 100,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  avatar: {
-    height: 175,
-    width: 175,
-    borderRadius: 100,
-    position: "absolute"
-  }
-});
