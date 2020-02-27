@@ -151,22 +151,8 @@ export class Profile extends Component {
               profileImage:
                 firebase.auth().currentUser.uid + "." + fileExtension
             });
-          await firebase
-            .storage()
-            .ref()
-            .child(
-              "ProfileImages/" +
-                firebase.auth().currentUser.uid +
-                "." +
-                fileExtension
-            )
-            .getDownloadURL()
-            .then(url => {
-              this.setState({ avatar: url });
-            });
         })
         .catch(error => {});
-
       this.setState({ avatar: result.uri });
     }
   };

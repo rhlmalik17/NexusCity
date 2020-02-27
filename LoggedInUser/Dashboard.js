@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { createAppContainer} from 'react-navigation';
 import Profile from './Screens/Profile';
+import Friends from './Screens/Friends';
 // export class DashBoard extends Component {
 //   constructor() {
 //     super();
@@ -63,14 +64,6 @@ function Messages()
     </View>
   )
 }
-function Friends()
-{
-  return (
-    <View style={styles.container}>
-      <Text>Friends</Text>
-    </View>
-  )
-}
 const DashBoard = createAppContainer(createMaterialBottomTabNavigator(
   {
     Messages: { 
@@ -110,11 +103,3 @@ const DashBoard = createAppContainer(createMaterialBottomTabNavigator(
 
 export default DashBoard;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
