@@ -14,23 +14,21 @@ import Icon from "react-native-vector-icons/Ionicons";
 import UserPermissions from "../Utilities/UserPermissions";
 import * as ImagePicker from "expo-image-picker";
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet";
-import ImageView from 'react-native-image-view';
-import styles from '../Stylings/Profile_Stylings';
-
+import ImageView from "react-native-image-view";
+import styles from "../Stylings/Profile_Stylings";
 
 export class Profile extends Component {
-  
   constructor() {
     super();
 
     const actionSheetStyles = StyleSheet.create({
-      container:{
-        flexDirection: 'row',
+      container: {
+        flexDirection: "row"
       },
-      textStylings:{
+      textStylings: {
         color: "#484a49",
         fontSize: 15,
-        marginLeft: '2%'
+        marginLeft: "2%"
       }
     });
 
@@ -42,24 +40,31 @@ export class Profile extends Component {
       avatar: null,
       options: [
         <View style={actionSheetStyles.container}>
-          <Icon name="ios-eye" size={24} color={'#16dae0'}/>
-          <Text style={actionSheetStyles.textStylings}>View Profile Picture</Text>
+          <Icon name="ios-eye" size={24} color={"#16dae0"} />
+          <Text style={actionSheetStyles.textStylings}>
+            View Profile Picture
+          </Text>
         </View>,
         <View style={actionSheetStyles.container}>
-        <Icon name="ios-add" size={24} color={'#16dae0'} />
-        <Text style={actionSheetStyles.textStylings}>Upload A New Profile Picture</Text>
-      </View>,
-      <View style={actionSheetStyles.container}>
-      <Icon name="ios-trash" size={24} color={'#16dae0'} />
-      <Text style={actionSheetStyles.textStylings}>Delete Profile Photo</Text>
-    </View>,
-      <View style={actionSheetStyles.container}>
-      <Icon name="ios-close" size={24} color={'#d96666'}/>
-      <Text style={actionSheetStyles.textStylings}>Cancel</Text>
-    </View>
+          <Icon name="ios-add" size={24} color={"#16dae0"} />
+          <Text style={actionSheetStyles.textStylings}>
+            Upload A New Profile Picture
+          </Text>
+        </View>,
+        <View style={actionSheetStyles.container}>
+          <Icon name="ios-trash" size={24} color={"#16dae0"} />
+          <Text style={actionSheetStyles.textStylings}>
+            Delete Profile Photo
+          </Text>
+        </View>,
+        <View style={actionSheetStyles.container}>
+          <Icon name="ios-close" size={24} color={"#d96666"} />
+          <Text style={actionSheetStyles.textStylings}>Cancel</Text>
+        </View>
       ],
       isViewerVisible: false,
-      defaultProfile: 'https://drive.google.com/uc?export=view&id=1OhKo6sBVYzQQddpEx-KxoLLrVJ5WdqLG'
+      defaultProfile:
+        "https://drive.google.com/uc?export=view&id=1OhKo6sBVYzQQddpEx-KxoLLrVJ5WdqLG"
     };
   }
   async componentDidMount() {
@@ -87,8 +92,12 @@ export class Profile extends Component {
           .getDownloadURL()
           .then(url => {
             this.setState({ avatar: url });
-          }).catch((error)=>{
-            this.setState({ avatar: './assets/default_Profile.png'});
+          })
+          .catch(error => {
+            this.setState({
+              avatar:
+                "https://drive.google.com/uc?export=view&id=1OhKo6sBVYzQQddpEx-KxoLLrVJ5WdqLG"
+            });
           });
 
         this.setState({
@@ -158,31 +167,30 @@ export class Profile extends Component {
   };
 
   imageViewHandle = () => {
-    this.setState({ isViewerVisible: true })
+    this.setState({ isViewerVisible: true });
   };
 
-  deleteAvatarHandler = async () =>{
+  deleteAvatarHandler = async () => {
     await firebase
-        .database()
-        .ref("/users/" + firebase.auth().currentUser.uid)
-        .once("value")
-        .then(snapshot => {
-          let oldProfile =
-            (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
+      .database()
+      .ref("/users/" + firebase.auth().currentUser.uid)
+      .once("value")
+      .then(snapshot => {
+        let oldProfile =
+          (snapshot.val() && snapshot.val().profileImage) || "Anonymous";
 
-          firebase
-            .storage()
-            .ref()
-            .child("ProfileImages/" + oldProfile)
-            .delete()
-            .catch(error => {});
-        })
-        .catch(error => {});
-        
-  }
+        firebase
+          .storage()
+          .ref()
+          .child("ProfileImages/" + oldProfile)
+          .delete()
+          .catch(error => {});
+      })
+      .catch(error => {});
+  };
 
-  actionSheetHandle = (index) => {
-    switch(index) {
+  actionSheetHandle = index => {
+    switch (index) {
       case 0:
         this.imageViewHandle();
         break;
@@ -194,36 +202,34 @@ export class Profile extends Component {
         this.setState({ avatar: this.state.defaultProfile });
         break;
     }
-  }
+  };
 
   render() {
-
-    
     const images = [
       {
-        source:{
-          uri: (this.state.avatar) ? this.state.avatar : this.state.defaultProfile
+        source: {
+          uri: this.state.avatar ? this.state.avatar : this.state.defaultProfile
         }
-      },
-  ];
+      }
+    ];
 
     if (this.state.fontsLoaded)
       return (
         // Parent
         <View style={styles.container}>
-            <ImageView
-              images={images}
-              isVisible={this.state.isViewerVisible}
-              onClose={()=> this.setState({ isViewerVisible : false })}
-              isSwipeCloseEnabled={true}
-              isPinchZoomEnabled={false}
-             />
+          <ImageView
+            images={images}
+            isVisible={this.state.isViewerVisible}
+            onClose={() => this.setState({ isViewerVisible: false })}
+            isSwipeCloseEnabled={true}
+            isPinchZoomEnabled={false}
+          />
 
           <ActionSheet
             ref={o => (this.ActionSheet = o)}
             options={this.state.options}
             cancelButtonIndex={3}
-            onPress={index=> this.actionSheetHandle(index)}
+            onPress={index => this.actionSheetHandle(index)}
           />
 
           {/* Upper Flex Box */}
@@ -246,7 +252,11 @@ export class Profile extends Component {
                   onPress={() => this.ActionSheet.show()}
                 >
                   <Image
-                    source={{ uri: (this.state.avatar) ? this.state.avatar : this.state.defaultProfile }}
+                    source={{
+                      uri: this.state.avatar
+                        ? this.state.avatar
+                        : this.state.defaultProfile
+                    }}
                     style={styles.avatar}
                   />
                   <Icon
@@ -407,4 +417,3 @@ export class Profile extends Component {
 }
 
 export default Profile;
-

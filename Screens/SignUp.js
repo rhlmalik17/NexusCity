@@ -26,13 +26,12 @@ export class SignUp extends Component {
       Full_Name: "",
       email: "",
       username: "",
-      password: "",
+      password: ""
     };
-    this.flag=false;
+    this.flag = false;
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-
   }
   bundleDataAndSend = () => {
     if (
@@ -47,20 +46,27 @@ export class SignUp extends Component {
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then(async () => {
-
-                firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
-                  full_Name: this.state.Full_Name,
-                  username: this.state.username,
-                  email: this.state.email,
-                  password: this.state.password,
-                });     
-
-                this.setState({
-                  Full_Name: "",
-                  email: "",
-                  username: "",
-                  password: ""
-                });
+            firebase
+              .database()
+              .ref("users/" + firebase.auth().currentUser.uid)
+              .set({
+                full_Name: this.state.Full_Name,
+                username: this.state.username,
+                email: this.state.email,
+                password: this.state.password
+              });
+            // firebase
+            //   .database()
+            //   .ref("users/" + this.state.email)
+            //   .set({
+            //     uid: firebase.auth().currentUser.uid
+            //   });
+            this.setState({
+              Full_Name: "",
+              email: "",
+              username: "",
+              password: ""
+            });
             this.props.navigation.navigate("EmailVerification");
           })
           .catch(
@@ -73,7 +79,7 @@ export class SignUp extends Component {
               });
               // if(!error==="undefined is not an object (evaluating 'props.navigation.navigate')")
               // alert(error+'\n Please try Again.');
-              alert(error+"Error");
+              alert(error + "Error");
             }.bind(this)
           );
       } else {
@@ -82,24 +88,21 @@ export class SignUp extends Component {
     }
   };
 
-  checkIfUserNameExist= async (username)=> {
-    var query =  firebase
+  checkIfUserNameExist = async username => {
+    var query = firebase
       .database()
       .ref("users")
       .orderByKey();
-     await query.once("value").then((snapshot)=>{
-      this.flag=snapshot.child(username).exists();
+    await query.once("value").then(snapshot => {
+      this.flag = snapshot.child(username).exists();
     });
-    
-  }
+  };
 
   async componentDidMount() {
     await Font.loadAsync({
       KulimPark: require("../Fonts/KulimPark-Regular.ttf")
     });
     await this.setState({ fontsLoaded: true });
-    
-   
   }
   render() {
     if (!this.state.fontsLoaded) {
