@@ -20,11 +20,24 @@ export class Friends extends Component {
       fontsLoaded: false,
       focus: false,
       displayPanel: "none",
-      isLoading: false
+      isLoading: false,
+      email: "",
+      username: "",
+      friends: []
     };
     if (!firebase.apps.length) {
       firebase.initializeApp("../../config.js");
     }
+    firebase
+      .database()
+      .ref("/users/" + firebase.auth().currentUser.uid)
+      .once("value")
+      .then(snapshot => {
+        var username =
+          (snapshot.val() && snapshot.val().username) || "Anonymous";
+        var email = (snapshot.val() && snapshot.val().email) || "Anonymous";
+        this.setState({ email: email, username: username });
+      });
   }
 
   componentDidMount = async () => {
@@ -40,9 +53,27 @@ export class Friends extends Component {
     this.setState({ fontsLoaded: true });
   };
 
-  handleSearchAndMapFriends = text => {
+  handleSearchAndMapFriends = async text => {
     this.setState({ isLoading: true });
-    // await firebase.database().ref()
+    await firebase
+      .database()
+      .ref("users")
+      .orderByKey()
+      .once("value")
+      .then(snapshot => {
+        snapshot.forEach(childSnapshot => {
+          // key will be "ada" the first time and "alan" the second time
+          let email = childSnapshot.child("email").val();
+          let username = childSnapshot.child("username").val();
+          if (
+            (text === email || text === username) &&
+            text !== this.state.email &&
+            text !== this.state.username
+          ) {
+            alert("Found it!");
+          }
+        });
+      });
   };
 
   SearchPanel = () => {
@@ -82,10 +113,7 @@ export class Friends extends Component {
         </Animatable.View>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-          onPress={() => {
-            Keyboard.dismiss;
-            this.setState({ isLoading: false });
-          }}
+          onPress={() => this.handleKeyBoardDismiss()}
         >
           {/* MAP THE SEARCH RESULTS HERE */}
           {this.state.isLoading ? (
@@ -98,6 +126,11 @@ export class Friends extends Component {
         </ScrollView>
       </View>
     );
+  };
+
+  handleKeyBoardDismiss = () => {
+    Keyboard.dismiss;
+    this.setState({ isLoading: false });
   };
 
   HeaderFriends = () => {
@@ -168,7 +201,8 @@ const styles = StyleSheet.create({
   searchPanelStyle: {
     flex: 1,
     backgroundColor: "#fff",
-    alignSelf: "stretch"
+    alignSelf: "stretch",
+    zIndex: 2
   },
   Inputs: {
     height: 50,
@@ -190,5 +224,11 @@ const styles = StyleSheet.create({
   },
   MappedResults: {
     alignItems: "center"
+  },
+  friendsBox: {
+    flex: 1,
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
