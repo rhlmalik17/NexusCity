@@ -6,7 +6,7 @@ import Icon from "react-native-vector-icons/Entypo";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { ActivityIndicator } from "react-native-paper";
 import * as Font from "expo-font";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 
 export class SearchedResult extends Component {
   constructor(props) {
@@ -60,7 +60,7 @@ export class SearchedResult extends Component {
     //Change Icon
 
     this.setState({ friendRequestSend: true });
-    Toast.show("Friend Request Sent");
+    // Toast.show("Friend Request Sent");
   };
 
   render() {

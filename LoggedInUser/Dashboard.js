@@ -8,7 +8,7 @@ import Friends from "./Screens/Friends/Friends";
 
 function Messages() {
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Messages</Text>
     </View>
   );

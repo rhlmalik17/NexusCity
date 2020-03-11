@@ -1,17 +1,12 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  TouchableNativeFeedback,
-  ActivityIndicator
-} from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import * as Font from "expo-font";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import styles from "../Stylings/SignUpScreen_styles";
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as firebase from "firebase";
 import firebaseConfig from "../config";
-
+import { RFPercentage } from "react-native-responsive-fontsize";
 export class SignUp extends Component {
   constructor() {
     super();
@@ -183,12 +178,11 @@ export class SignUp extends Component {
                     style={{
                       zIndex: 2,
                       position: "absolute",
-                      left: 360,
-                      top: 15,
-                      height: 40,
-                      width: 40,
                       alignItems: "center",
-                      justifyContent: "center"
+                      justifyContent: "center",
+                      alignSelf: "flex-end",
+                      top: "40%",
+                      right: RFPercentage(3)
                     }}
                   >
                     <TouchableOpacity
@@ -253,10 +247,7 @@ export class SignUp extends Component {
                   </Text>
                 </Text>
               </View>
-              <TouchableNativeFeedback
-                background={TouchableNativeFeedback.Ripple()}
-                onPress={() => this.bundleDataAndSend()}
-              >
+              <TouchableOpacity onPress={() => this.bundleDataAndSend()}>
                 <View
                   style={
                     this.state.Full_Name &&
@@ -277,7 +268,7 @@ export class SignUp extends Component {
                     Sign Up
                   </Text>
                 </View>
-              </TouchableNativeFeedback>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("LoginScreen")}
               >

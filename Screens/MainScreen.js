@@ -7,7 +7,7 @@ import {
   TouchableNativeFeedback,
   ActivityIndicator,
   StatusBar,
-  BackHandler
+  Button
 } from "react-native";
 import * as Font from "expo-font";
 import styles from "../Stylings/MainScreen_styles";
@@ -83,9 +83,8 @@ export default class MainScreen extends React.Component {
               <View style={styles.buttonBox}>
                 {/* BUTTONS */}
                 {/* LOGIN */}
-                <TouchableNativeFeedback
+                <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("LoginScreen")}
-                  background={TouchableNativeFeedback.Ripple("", false)}
                 >
                   <View style={styles.LoginButton}>
                     <Text
@@ -98,7 +97,7 @@ export default class MainScreen extends React.Component {
                       LOGIN
                     </Text>
                   </View>
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
 
                 <View
                   style={{
@@ -109,9 +108,8 @@ export default class MainScreen extends React.Component {
                   }}
                 ></View>
 
-                <TouchableNativeFeedback
+                <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("SignUpScreen")}
-                  background={TouchableNativeFeedback.Ripple("", false)}
                 >
                   <View
                     style={{
@@ -129,7 +127,7 @@ export default class MainScreen extends React.Component {
                       SIGN UP
                     </Text>
                   </View>
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
               </View>
               <View style={styles.apiBox}>
                 {/* API BUTTONS */}

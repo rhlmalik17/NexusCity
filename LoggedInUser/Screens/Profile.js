@@ -5,10 +5,7 @@ import { ActivityIndicator } from "react-native-paper";
 import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import * as firebase from "firebase";
 import firebaseConfig from "../../config";
-import {
-  TouchableNativeFeedback,
-  TouchableOpacity
-} from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackActions, NavigationActions } from "react-navigation";
 import Icon from "react-native-vector-icons/Ionicons";
 import UserPermissions from "../Utilities/UserPermissions";
@@ -394,14 +391,11 @@ export class Profile extends Component {
               </View>
             </View>
           </View>
-          <TouchableNativeFeedback
-            background={TouchableNativeFeedback.Ripple()}
-            onPress={() => this.logOut()}
-          >
+          <TouchableOpacity onPress={() => this.logOut()}>
             <View style={styles.button}>
               <Text style={styles.textStylings}>Log Out</Text>
             </View>
-          </TouchableNativeFeedback>
+          </TouchableOpacity>
         </View>
       );
     else {
