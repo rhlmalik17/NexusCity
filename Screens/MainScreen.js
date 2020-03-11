@@ -10,34 +10,32 @@ import {
   BackHandler
 } from "react-native";
 import * as Font from "expo-font";
-import styles from '../Stylings/MainScreen_styles'
+import styles from "../Stylings/MainScreen_styles";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { TouchableOpacity,} from "react-native-gesture-handler";
-import * as firebase from 'firebase';
-import firebaseConfig from '../config';
-import { RFPercentage } from 'react-native-responsive-fontsize';
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import { TouchableOpacity } from "react-native-gesture-handler";
+import * as firebase from "firebase";
+import firebaseConfig from "../config";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default class MainScreen extends React.Component {
   constructor() {
     super();
     this.state = {
       fontsLoaded: false,
-      willLoad: false,
+      willLoad: false
     };
-    firebase.auth().onAuthStateChanged(function(user){
-      if(user && firebase.auth().currentUser.emailVerified)
-      {
-        this.props.navigation.navigate('LoginScreen');
-      }
-      else
-      {
-        this.setState({willLoad: true})
-      }
-    }.bind(this));
-   
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    firebase.auth().onAuthStateChanged(
+      function(user) {
+        if (user && firebase.auth().currentUser.emailVerified) {
+          this.props.navigation.navigate("LoginScreen");
+        } else {
+          this.setState({ willLoad: true });
+        }
+      }.bind(this)
+    );
   }
 
   async componentDidMount() {
@@ -46,12 +44,10 @@ export default class MainScreen extends React.Component {
       "Open-Sans": require("../Fonts/OpenSans-Regular.ttf")
     });
     await this.setState({ fontsLoaded: true });
-   
   }
-  
+
   render() {
-    if(this.state.willLoad)
-    {
+    if (this.state.willLoad) {
       if (!this.state.fontsLoaded) {
         return <ActivityIndicator size="large" />;
       } else {
@@ -60,27 +56,30 @@ export default class MainScreen extends React.Component {
             source={require("../assets/Background.png")}
             style={styles.container}
           >
-          <StatusBar  
-     backgroundColor = "#b3e6ff"  
-     barStyle = "dark-content"   
-     hidden={true}
-   />  
+            <StatusBar
+              backgroundColor="#b3e6ff"
+              barStyle="dark-content"
+              hidden={true}
+            />
             <View nativeID="FlexBOX" style={styles.ParentBox}>
-            <View style={styles.logoParent}>
-            <Image source={require("../assets/Logo.png")} style={styles.Logo} />
-              <View style={styles.logoBox}>
-                {/* LOGO */}
-                <View style={styles.Icons}>
-                  <Icon
-                    name="location-arrow"
-                    color="#FFF"
-                    size={RFPercentage(8)}
-                  />
+              <View style={styles.logoParent}>
+                <Image
+                  source={require("../assets/Logo.png")}
+                  style={styles.Logo}
+                />
+                <View style={styles.logoBox}>
+                  {/* LOGO */}
+                  <View style={styles.Icons}>
+                    <Icon
+                      name="location-arrow"
+                      color="#FFF"
+                      size={RFPercentage(8)}
+                    />
+                  </View>
+                  <Text style={styles.TextStylings}>NexusCity</Text>
                 </View>
-                <Text style={styles.TextStylings}>NexusCity</Text>
               </View>
-            </View>
-              
+
               <View style={styles.buttonBox}>
                 {/* BUTTONS */}
                 {/* LOGIN */}
@@ -99,17 +98,17 @@ export default class MainScreen extends React.Component {
                       LOGIN
                     </Text>
                   </View>
-                  </TouchableNativeFeedback>
+                </TouchableNativeFeedback>
 
                 <View
                   style={{
                     borderRadius: 20,
-                    height: '5%',
-                    width: '45%',
+                    height: "5%",
+                    width: "45%",
                     backgroundColor: "rgba(255,255,255,0.8)"
                   }}
                 ></View>
-                
+
                 <TouchableNativeFeedback
                   onPress={() => this.props.navigation.navigate("SignUpScreen")}
                   background={TouchableNativeFeedback.Ripple("", false)}
@@ -137,28 +136,17 @@ export default class MainScreen extends React.Component {
                 <TouchableOpacity>
                   <Icon name="facebook" color="#FFF" size={RFPercentage(5)} />
                 </TouchableOpacity>
-  
+
                 <TouchableOpacity>
-                  <Icon
-                    name="google"
-                    color="#FFF"
-                    size={RFPercentage(5)}
-                  />
+                  <Icon name="google" color="#FFF" size={RFPercentage(5)} />
                 </TouchableOpacity>
               </View>
             </View>
           </ImageBackground>
         );
-    }
-    
-    }
-    else
-    {
-      return (
-        <View>
-
-        </View>
-      );
+      }
+    } else {
+      return <View></View>;
     }
   }
 }
