@@ -5,6 +5,7 @@ import SearchedResult from "./SearchedResult";
 import * as firebase from "firebase";
 import firebaseConfig from "../../../config";
 import Icon from "react-native-vector-icons/Ionicons";
+import { ActivityIndicator } from "react-native-paper";
 
 export default class SearchPanel extends Component {
   constructor() {
@@ -20,8 +21,12 @@ export default class SearchPanel extends Component {
     }
   }
   handleSearchAndMapFriends = async text => {
-    let searched = text.toLowerCase();
-    this.setState({ searchedResults: "", showResults: false });
+    let searched = text.toLowerCase().trim();
+    this.setState({
+      searchedResults: "",
+      showResults: false,
+      showActivityHandler: true
+    });
     var query = firebase
       .database()
       .ref("users")
@@ -42,6 +47,7 @@ export default class SearchPanel extends Component {
         }
       });
     });
+    if (!this.state.showResults) this.setState({ showActivityHandler: false });
   };
   resetHandler = () => {
     this.setState({ searchedResults: [] });
@@ -87,8 +93,12 @@ export default class SearchPanel extends Component {
         >
           {this.state.showResults ? (
             <SearchedResult results={this.state.searchedResults} />
+          ) : this.state.showActivityHandler ? (
+            <ActivityIndicator size="large" />
           ) : (
-            <View></View>
+            <View>
+              <Text>No User Found</Text>
+            </View>
           )}
         </ScrollView>
       </View>

@@ -5,7 +5,7 @@ import SearchPanel from "./SearchPanel";
 import NotificationsPanel from "./NotificationsPanel";
 
 NotificationsPanel.navigationOptions = {
-  header: null
+  title: "Notifications"
 };
 
 FriendsScreen.navigationOptions = {

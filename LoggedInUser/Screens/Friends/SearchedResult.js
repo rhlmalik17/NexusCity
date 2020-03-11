@@ -6,8 +6,7 @@ import Icon from "react-native-vector-icons/Entypo";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { ActivityIndicator } from "react-native-paper";
 import * as Font from "expo-font";
-// import Toast from "react-native-simple-toast";
-
+import Toast, { DURATION } from "react-native-easy-toast";
 export class SearchedResult extends Component {
   constructor(props) {
     super(props);
@@ -24,8 +23,34 @@ export class SearchedResult extends Component {
       firebase.initializeApp(firebaseConfig);
     }
   }
-
+  db = {
+    sentTo: async (receiver, currentUser) => {
+      await firebase
+        .database()
+        .ref(
+          "users/" + currentUser + "/FriendRequests/sentTo/" + receiver + "/"
+        )
+        .update({
+          status: "Pending"
+        });
+    },
+    receivedBy: async (receiver, currentUser) => {
+      await firebase
+        .database()
+        .ref(
+          "users/" +
+            receiver +
+            "/FriendRequests/receivedBy/" +
+            currentUser +
+            "/"
+        )
+        .update({
+          status: "Pending"
+        });
+    }
+  };
   componentDidMount = async () => {
+    let currentUser = firebase.auth().currentUser.uid;
     await firebase
       .database()
       .ref("users/" + this.props.results)
@@ -53,14 +78,33 @@ export class SearchedResult extends Component {
       WorkSans: require("../../Fonts/Work-Sans.ttf"),
       ProText: require("../../Fonts/SFPRO.ttf")
     });
+    await firebase
+      .database()
+      .ref("users/" + currentUser + "/FriendRequests/sentTo/")
+      .once("value")
+      .then(snapshot => {
+        if (snapshot.child(this.props.results).exists()) {
+          this.setState({ friendRequestSend: true });
+        } else {
+          this.setState({ friendRequestSend: false });
+        }
+      });
     this.setState({ isLoaded: true });
   };
 
   handleSendFriendRequest = async () => {
-    //Change Icon
+    if (!this.state.friendRequestSend) {
+      this.setState({ friendRequestSend: true });
+      let receiver = this.props.results;
+      let currentUser = firebase.auth().currentUser.uid;
 
-    this.setState({ friendRequestSend: true });
-    // Toast.show("Friend Request Sent");
+      Promise.all([
+        this.db.sentTo(receiver, currentUser),
+        this.db.receivedBy(receiver, currentUser)
+      ]);
+
+      this.refs.toast.show("Friend Request Sent!");
+    }
   };
 
   render() {
@@ -131,6 +175,13 @@ export class SearchedResult extends Component {
               onPress={() => this.handleSendFriendRequest()}
             />
           </View>
+          <Toast
+            ref="toast"
+            position={"bottom"}
+            positionValue={RFPercentage(30)}
+            fadeOutDuration={500}
+            opacity={0.7}
+          />
         </View>
       );
     } else {
@@ -154,8 +205,8 @@ const styles = StyleSheet.create({
     marginVertical: "2%"
   },
   profileAvatar: {
-    height: "95%",
-    width: "40%",
+    height: RFPercentage(12),
+    width: RFPercentage(12),
     backgroundColor: "#72e8ed",
     borderRadius: RFPercentage(50),
     alignItems: "center",

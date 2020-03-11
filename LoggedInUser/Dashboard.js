@@ -13,6 +13,7 @@ function Messages() {
     </View>
   );
 }
+
 const DashBoard = createAppContainer(
   createMaterialBottomTabNavigator(
     {
@@ -45,7 +46,7 @@ const DashBoard = createAppContainer(
       }
     },
     {
-      initialRouteName: "Messages",
+      initialRouteName: "Friends",
       activeColor: "#16dae0",
       barStyle: { backgroundColor: "#fff" },
       shifting: true,
